@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniGIF - Create Animated GIFs</title>
+    <style>
+        :root {
+            --primary: #2A2A72;
+            --accent: #FFA400;
+            --background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            background: var(--background);
+            display: grid;
+            place-items: center;
+            color: #2A2A72;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mode-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin: 3rem 0;
+        }
+
+        .mode-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .mode-card h2 {
+            margin: 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        .mode-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .nodeco {
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.3s ease;
+        }
+
+        .nodeco:hover {
+            opacity: 0.8;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 AniGIF Maker</h1>
+            <p class="tagline">Transform Ideas into Animated Magic</p>
+        </header>
+
+        <div class="mode-grid">
+            <a href="draw_v1/" class="mode-card">
+                <h2>🎨 Draw Mode</h2>
+                <p>Create frame-by-frame animations with drawing tools. Perfect for pixel art and hand-drawn animations.</p>
+                <div class="highlight">Start Sketching →</div>
+            </a>
+
+            <a href="imgtext_v1/" class="mode-card">
+                <h2>📸 Image+Text Mode</h2>
+                <p>Combine existing images with animated text. Ideal for memes, captions, and enhanced visuals.</p>
+                <div class="highlight">Upload & Create →</div>
+            </a>
+        </div>
+
+        <footer>
+            <a href='https://www.youtube.com/@tortorkeneducation' class="nodeco">
+                🐢 Tortorken Education ©2025
+            </a>
+        </footer>
+    </div>
+</body>
+</html>
