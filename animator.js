@@ -47,7 +47,7 @@
         
         // Drawing settings
         let brushSize = 5;
-        let brushColor = '#000000';
+        let brushColor = '#7EC1E6';
         
         // Initialize
         init();
