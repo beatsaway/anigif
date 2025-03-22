@@ -12,7 +12,7 @@
         createBlankFrame()
     ];
     let currentFrameIndex = 0;
-    const MAX_FRAMES = 12;
+    const MAX_FRAMES = 24;
     
     // Drawing state
     let isDrawing = false;
