@@ -551,7 +551,12 @@
         // Create a new GIF encoder
         const encoder = new GIFEncoder(canvas.width, canvas.height);
         encoder.setRepeat(0); // 0 = repeat forever
-        encoder.setDelay(200); // 200ms delay between frames
+        
+        // Get frame duration from input (convert seconds to milliseconds)
+        const frameDurationSeconds = parseFloat(document.getElementById('frame-duration').value) || 0.2;
+        const frameDurationMs = Math.round(frameDurationSeconds * 1000);
+        encoder.setDelay(frameDurationMs); // Set delay between frames
+        
         encoder.setQuality(10); // Quality setting (1-30, lower is better)
         
         // Important: Don't set white as transparent, set null for transparency support
