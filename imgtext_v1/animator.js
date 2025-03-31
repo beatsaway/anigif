@@ -106,7 +106,46 @@
         cloneFrameBtn.addEventListener('click', cloneCurrentFrame);
         
         // Text annotation event listeners
-        annotationText.addEventListener('input', handleTextInput);
+        annotationText.addEventListener('input', () => {
+            // If there's no active text object, create one
+            if (!activeObject || activeObject.type !== 'text') {
+                const textObj = {
+                    type: 'text',
+                    text: annotationText.value,
+                    x: 50,
+                    y: 50,
+                    scale: 1,
+                    style: { ...currentTextStyle }
+                };
+                frameObjects[currentFrameIndex].push(textObj);
+                activeObject = textObj;
+                redrawCanvas();
+            } else {
+                // Update existing text object
+                activeObject.text = annotationText.value;
+                redrawCanvas();
+            }
+        });
+        
+        // Select text object when input gets focus
+        annotationText.addEventListener('focus', () => {
+            // Find existing text object or create new one
+            let textObj = frameObjects[currentFrameIndex].find(obj => obj.type === 'text');
+            if (!textObj) {
+                textObj = {
+                    type: 'text',
+                    text: annotationText.value,
+                    x: 50,
+                    y: 50,
+                    scale: 1,
+                    style: { ...currentTextStyle }
+                };
+                frameObjects[currentFrameIndex].push(textObj);
+            }
+            activeObject = textObj;
+            redrawCanvas();
+        });
+        
         annotationText.addEventListener('select', showTextStylePopup);
         annotationText.addEventListener('mouseup', showTextStylePopup);
         
@@ -367,18 +406,25 @@
                 ctx.font = getTextFont(obj);
                 ctx.fillStyle = obj.style.color;
                 
-                // Draw text
-                ctx.fillText(obj.text, 0, parseInt(obj.style.fontSize));
+                // Split text into lines and draw each line
+                const lines = obj.text.split('\n');
+                const lineHeight = parseInt(obj.style.fontSize) * 1.2; // Add some line spacing
                 
-                // Draw underline if needed
-                if (obj.style.underline) {
-                    const width = ctx.measureText(obj.text).width;
-                    ctx.beginPath();
-                    ctx.moveTo(0, parseInt(obj.style.fontSize) + 2);
-                    ctx.lineTo(width, parseInt(obj.style.fontSize) + 2);
-                    ctx.strokeStyle = obj.style.color;
-                    ctx.stroke();
-                }
+                lines.forEach((line, index) => {
+                    // Preserve whitespace by replacing spaces with non-breaking spaces
+                    const textLine = line.replace(/ /g, '\u00A0');
+                    ctx.fillText(textLine, 0, parseInt(obj.style.fontSize) + (lineHeight * index));
+                    
+                    // Draw underline if needed
+                    if (obj.style.underline) {
+                        const width = ctx.measureText(textLine).width;
+                        ctx.beginPath();
+                        ctx.moveTo(0, parseInt(obj.style.fontSize) + 2 + (lineHeight * index));
+                        ctx.lineTo(width, parseInt(obj.style.fontSize) + 2 + (lineHeight * index));
+                        ctx.strokeStyle = obj.style.color;
+                        ctx.stroke();
+                    }
+                });
             } else {
                 // Draw image
                 ctx.drawImage(obj.element, 0, 0);
@@ -721,8 +767,8 @@
         encoder.setDelay(Math.round(parseFloat(frameDuration.value) * 1000)); // Convert seconds to milliseconds
         encoder.setQuality(10); // Quality setting (1-30, lower is better)
         
-        // Important: Don't set white as transparent, set null for transparency support
-        encoder.setTransparent(null);
+        // Set transparent color to white (0xFFFFFF) to make it transparent in the GIF
+        encoder.setTransparent(0xFFFFFF);
         
         // Start the encoder
         encoder.writeHeader();
@@ -735,8 +781,9 @@
             tempCanvas.height = canvas.height;
             const tempCtx = tempCanvas.getContext('2d');
             
-            // Clear with transparent background
-            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+            // Fill with white background (this will become transparent)
+            tempCtx.fillStyle = '#FFFFFF';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
             
             // Draw all objects for this frame
             const objects = frameObjects[frameIndex];
@@ -750,18 +797,25 @@
                     tempCtx.translate(obj.x, obj.y);
                     tempCtx.scale(obj.scale, obj.scale);
                     
-                    // Draw text
-                    tempCtx.fillText(obj.text, 0, parseInt(obj.style.fontSize));
+                    // Split text into lines and draw each line
+                    const lines = obj.text.split('\n');
+                    const lineHeight = parseInt(obj.style.fontSize) * 1.2; // Add some line spacing
                     
-                    // Draw underline if needed
-                    if (obj.style.underline) {
-                        const width = tempCtx.measureText(obj.text).width;
-                        tempCtx.beginPath();
-                        tempCtx.moveTo(0, parseInt(obj.style.fontSize) + 2);
-                        tempCtx.lineTo(width, parseInt(obj.style.fontSize) + 2);
-                        tempCtx.strokeStyle = obj.style.color;
-                        tempCtx.stroke();
-                    }
+                    lines.forEach((line, index) => {
+                        // Preserve whitespace by replacing spaces with non-breaking spaces
+                        const textLine = line.replace(/ /g, '\u00A0');
+                        tempCtx.fillText(textLine, 0, parseInt(obj.style.fontSize) + (lineHeight * index));
+                        
+                        // Draw underline if needed
+                        if (obj.style.underline) {
+                            const width = tempCtx.measureText(textLine).width;
+                            tempCtx.beginPath();
+                            tempCtx.moveTo(0, parseInt(obj.style.fontSize) + 2 + (lineHeight * index));
+                            tempCtx.lineTo(width, parseInt(obj.style.fontSize) + 2 + (lineHeight * index));
+                            tempCtx.strokeStyle = obj.style.color;
+                            tempCtx.stroke();
+                        }
+                    });
                 } else {
                     // Draw image
                     tempCtx.translate(obj.x, obj.y);
