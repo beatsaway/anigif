@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Make it Wiggle - Text</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Abril+Fatface&family=Alfa+Slab+One&family=Bebas+Neue&family=Cabin+Sketch&family=Creepster&family=Dancing+Script&family=Fascinate&family=Fredoka+One&family=Lobster&family=Londrina+Sketch&family=Permanent+Marker&family=Press+Start+2P&family=Righteous&family=Rubik+Mono+One&family=Russo+One&family=Sacramento&family=Special+Elite&family=VT323&family=Yellowtail" rel="stylesheet">
+    <!-- Use local gif.js library instead of CDN -->
+    <script src="gif.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 95%;
+            margin: 10px auto;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .app-description {
+            font-size: 12px;
+            color: #666;
+            flex-grow: 1;
+            text-align: center;
+            margin: 0 10px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 8px;
+            padding: 5px;
+        }
+        
+        #controls {
+            margin-bottom: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        #canvas-container {
+            position: relative;
+            margin: 6px auto 2px auto;
+            border: 1px solid #ccc;
+            display: inline-block;
+            overflow: hidden;
+            max-width: 100%;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+            background-image: linear-gradient(45deg, #eee 25%, transparent 25%),
+                              linear-gradient(-45deg, #eee 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #eee 75%),
+                              linear-gradient(-45deg, transparent 75%, #eee 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+        
+        #drawing-canvas {
+            display: block;
+            cursor: crosshair;
+            background-color: transparent;
+        }
+        
+        /* Add resize handle styles */
+        #resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            cursor: nwse-resize;
+            z-index: 10;
+        }
+        
+        #resize-handle.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #output {
+            min-height: 10px;
+            padding: 10px;
+            line-height: 1.1;
+            border: 0px solid #ccc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: keep-all;
+            display: none; /* Hide the output since we're using canvas now */
+        }
+        
+        .word-wrapper {
+            display: inline-block;
+            white-space: nowrap;
+            vertical-align: top;
+            margin-right: 4px;
+        }
+        
+        .letter {
+            display: inline-block;
+            padding: 1px;
+            font-size: 48px;
+            -webkit-text-stroke: 0.1px;
+            text-shadow: -0.5px -0.5px 0,
+                         -0.5px  0.5px 0,
+                          0.5px -0.5px 0,
+                          0.5px  0.5px 0;
+        }
+        
+        label {
+            margin-right: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: black;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            margin-right: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(50, 50, 50, 0.2);
+        }
+        
+        button.active {
+            background-color: rgba(100, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+        
+        input[type="color"] {
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        
+        input[type="range"] {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        
+        #saveStatus {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        #saveButton {
+            background-color: rgba(0, 100, 0, 0.2);
+            border-color: #006600;
+        }
+        
+        #saveButton:hover {
+            background-color: rgba(0, 100, 0, 0.3);
+        }
+        
+        #saveButton:disabled {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        #progressBar {
+            width: 100%;
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        #progressFill {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        
+        /* Font Selection Popup Styles */
+        #chooseFontsPopup {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #ccc;
+            padding: 10px;
+            z-index: 9999;
+            max-height: 50vh;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        
+        #fontCheckboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .fontOption {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        
+        .popupButton {
+            margin: 5px 5px 5px 0;
+        }
+        
+        footer {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #666;
+            height: 30px;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="app-title">Make it Wiggle - Text Only</div>
+        <div class="app-description">Create animated GIFs with text. Type anything to make it wiggle.</div>
+    </div>
+    
+    <textarea id="inputText" placeholder="Type anything here to make it POP ART style"></textarea>
+
+    <div id="canvas-container">
+        <canvas id="drawing-canvas" width="1280" height="720"></canvas>
+        <div id="resize-handle"></div>
+    </div>
+
+    <div id="controls">
+        <label>
+            <input type="checkbox" id="groupCheckbox" checked>
+            Group by words
+        </label>
+        <button id="previewButton">Generate GIF</button>
+        <label>
+            <input type="checkbox" id="randomColorCheckbox">
+            Random Color
+        </label>
+        <input type="color" id="textColorPicker" value="#000000">
+        <label>
+            Background Color:
+            <input type="color" id="bgColorPicker" value="#ffffff">
+        </label>
+        <label>
+            <input type="checkbox" id="randomBgColorCheckbox">
+            Random Background
+        </label>
+        <label>
+            Frame Duration (secs):
+            <input type="number" id="frameDurationInput" value="0.3" min="0.02" max="2" step="0.01">
+        </label>
+        <label>
+            Line Height:
+            <input type="range" id="lineHeightSlider" min="80" max="150" value="110" step="1">
+            <span id="lineHeightValue">110%</span>
+        </label>
+        <button id="chooseFontsButton">Choose Fonts</button>
+    </div>
+
+    <div id="saveStatus"></div>
+    <div id="output"></div>
+
+    <!-- Font Selection Popup -->
+    <div id="chooseFontsPopup">
+        <h3>Choose Fonts</h3>
+        <div>
+            <button class="popupButton" id="selectAllFonts">Select All</button>
+            <button class="popupButton" id="unselectAllFonts">Unselect All</button>
+            <button class="popupButton" id="closeFontsPopup">Close</button>
+        </div>
+        <div id="fontCheckboxes"></div>
+    </div>
+
+    <!-- GIF Preview Section -->
+    <img id="previewGif" alt="GIF Preview" style="display:none; max-width:100%; margin-top:10px;">
+    
+    <footer>
+        <a href='https://www.youtube.com/@tortorkeneducation' class="nodeco">🐢Tortorken Education ©2025</a> 
+    </footer>
+
+    <script>
+        const textarea = document.getElementById('inputText');
+        const output = document.getElementById('output');
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        const groupCheckbox = document.getElementById('groupCheckbox');
+        const previewButton = document.getElementById('previewButton');
+        const saveStatus = document.getElementById('saveStatus');
+        const lineHeightSlider = document.getElementById('lineHeightSlider');
+        const lineHeightValue = document.getElementById('lineHeightValue');
+        const randomColorCheckbox = document.getElementById('randomColorCheckbox');
+        const textColorPicker = document.getElementById('textColorPicker');
+        const bgColorPicker = document.getElementById('bgColorPicker');
+        const randomBgColorCheckbox = document.getElementById('randomBgColorCheckbox');
+        const frameDurationInput = document.getElementById('frameDurationInput');
+        const resizeHandle = document.getElementById('resize-handle');
+        const canvasContainer = document.getElementById('canvas-container');
+        const chooseFontsButton = document.getElementById('chooseFontsButton');
+        
+        // Font selection elements
+        const chooseFontsPopup = document.getElementById('chooseFontsPopup');
+        const fontCheckboxesDiv = document.getElementById('fontCheckboxes');
+        const selectAllFontsButton = document.getElementById('selectAllFonts');
+        const unselectAllFontsButton = document.getElementById('unselectAllFonts');
+        const closeFontsPopupButton = document.getElementById('closeFontsPopup');
+        
+        // GIF preview elements
+        const previewGif = document.getElementById('previewGif');
+
+        // Available fonts
+        const allFonts = [
+            'Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier New',
+            'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
+            'Trebuchet MS', 'Arial Black', 'Impact',
+            'Abril Fatface', 'Alfa Slab One', 'Bebas Neue', 'Cabin Sketch',
+            'Creepster', 'Dancing Script', 'Fascinate', 'Fredoka One',
+            'Gloria Hallelujah', 'Lobster', 'Londrina Sketch', 'Permanent Marker',
+            'Press Start 2P', 'Righteous', 'Rubik Mono One', 'Russo One',
+            'Sacramento', 'Special Elite', 'VT323', 'Yellowtail',
+            'monospace', 'fantasy', 'cursive', 'system-ui', 'sans-serif', 'serif'
+        ];
+
+        let selectedFonts = [];
+        let cancelGeneration = false;
+        let currentLineHeight = 110;
+        let capturedFrames = [];
+        let frameDelays = [];
+        let isProcessing = false;
+        let frameDuration = 0.3; // Default frame duration in seconds (changed from 0.05)
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
+
+        // Add a variable to track the previous background color
+        let previousBgColor = '#ffffff';
+        let previousHue = 0;
+        let previousSaturation = 30;
+        let previousLightness = 90;
+
+        // Add a map to store line break decisions
+        let wordLineBreakMap = new Map();
+        
+        // Add a map to store random position offsets for each word
+        let wordPositionMap = new Map();
+
+        // Hide GIF preview section initially
+        // gifPreviewSection.style.display = 'none';
+
+        // Initialize selected fonts randomly
+        function initSelectedFontsRandomly() {
+            // Only select Gloria Hallelujah by default
+            selectedFonts = ['Gloria Hallelujah'];
+        }
+
+        // Build font checkboxes
+        function buildFontCheckboxes() {
+            fontCheckboxesDiv.innerHTML = '';
+            allFonts.forEach(fontName => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'fontOption';
+
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = fontName;
+                cb.checked = selectedFonts.includes(fontName);
+
+                const label = document.createElement('label');
+                label.textContent = fontName;
+                label.style.fontFamily = fontName;
+
+                cb.addEventListener('change', () => {
+                    if (cb.checked) {
+                        if (!selectedFonts.includes(fontName)) {
+                            selectedFonts.push(fontName);
+                        }
+                    } else {
+                        selectedFonts = selectedFonts.filter(f => f !== fontName);
+                    }
+                });
+
+                wrapper.appendChild(cb);
+                wrapper.appendChild(label);
+                fontCheckboxesDiv.appendChild(wrapper);
+            });
+        }
+
+        // Canvas resize functionality
+        resizeHandle.addEventListener('mousedown', initResize);
+        
+        function initResize(e) {
+            if (isProcessing) {
+                // Disable resize during GIF generation
+                return;
+            }
+            
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = canvas.width;
+            startHeight = canvas.height;
+            
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+        }
+        
+        function resize(e) {
+            if (!isResizing) return;
+            
+            // Calculate new dimensions
+            const newWidth = startWidth + (e.clientX - startX);
+            const newHeight = startHeight + (e.clientY - startY);
+            
+            // Set minimum dimensions
+            const minWidth = 320;
+            const minHeight = 180;
+            
+            // Apply new dimensions if they meet minimum requirements
+            if (newWidth >= minWidth && newHeight >= minHeight) {
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // Redraw the canvas with the background color
+                const bgColor = bgColorPicker.value;
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Refresh the output to redraw text
+                refreshOutput();
+            }
+        }
+        
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        function clearFirst() {
+            cancelGeneration = true;
+            output.innerHTML = '';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function getRandomPopArtColor() {
+            if (!randomColorCheckbox.checked) {
+                return textColorPicker.value;
+            }
+            const hue = Math.floor(Math.random() * 360);
+            return `hsl(${hue}, 100%, 50%)`; // Fixed brightness at 50%
+        }
+
+        function getRandomBgColor() {
+            if (!randomBgColorCheckbox.checked) {
+                return bgColorPicker.value;
+            }
+            
+            // Make small incremental changes to the previous color
+            // This creates a more gradual transition between frames
+            
+            // Change hue by a small random amount (-15 to +15 degrees)
+            const hueChange = Math.floor(Math.random() * 31) - 15;
+            let newHue = (previousHue + hueChange + 360) % 360;
+            
+            // Change saturation by a small amount (-5 to +5 percent)
+            const saturationChange = Math.floor(Math.random() * 11) - 5;
+            let newSaturation = Math.max(15, Math.min(50, previousSaturation + saturationChange));
+            
+            // Change lightness by a small amount (-3 to +3 percent)
+            const lightnessChange = Math.floor(Math.random() * 7) - 3;
+            let newLightness = Math.max(75, Math.min(95, previousLightness + lightnessChange));
+            
+            // Update previous values for next frame
+            previousHue = newHue;
+            previousSaturation = newSaturation;
+            previousLightness = newLightness;
+            
+            // Return the new color
+            return `hsl(${newHue}, ${newSaturation}%, ${newLightness}%)`;
+        }
+
+        function getRandomFont() {
+            if (selectedFonts.length === 0) {
+                return `"Arial"`;
+            }
+            const f = selectedFonts[Math.floor(Math.random() * selectedFonts.length)];
+            return `"${f}"`;
+        }
+
+        function getRandomSize() {
+            return 24 + (Math.random() * 2 - 1);
+        }
+
+        function getRandomRotation() {
+            return Math.random() * 5 - 2.5;
+        }
+
+        function getRandomStyle() {
+            return {
+                fontFamily: getRandomFont(),
+                fontSize: getRandomSize(),
+                color: getRandomPopArtColor(),
+                outlineColor: getRandomPopArtColor(),
+                rotation: getRandomRotation()
+            };
+        }
+
+        function styleLetterSpan(span, styleData) {
+            span.style.fontFamily = styleData.fontFamily;
+            span.style.fontSize = styleData.fontSize + 'px';
+            span.style.display = 'inline-block';
+            span.style.transform = `rotate(${styleData.rotation}deg)`;
+            span.style.color = styleData.color;
+            span.style.lineHeight = `${currentLineHeight}%`;
+
+            const useOutline = Math.random() < 0.66;
+            if (useOutline) {
+                span.style.webkitTextStrokeWidth = '0.5px';
+                span.style.webkitTextStrokeColor = styleData.outlineColor;
+                span.style.textShadow = `
+                    -0.5px -0.5px 0 ${styleData.outlineColor},
+                     0.5px -0.5px 0 ${styleData.outlineColor},
+                    -0.5px  0.5px 0 ${styleData.outlineColor},
+                     0.5px  0.5px 0 ${styleData.outlineColor}
+                `;
+            } else {
+                span.style.webkitTextStrokeWidth = '0px';
+                span.style.webkitTextStrokeColor = 'transparent';
+                span.style.textShadow = 'none';
+            }
+        }
+
+        function parseTextIntoTokens(text) {
+            const tokens = [];
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (c === '\n') {
+                    tokens.push({ type: 'newline', char: '\n' });
+                } else if (c === ' ') {
+                    tokens.push({ type: 'space', char: ' ' });
+                } else {
+                    tokens.push({ type: 'letter', char: c });
+                }
+            }
+            return tokens;
+        }
+
+        function generateStyledSpans(text, groupByWords) {
+            const tokens = parseTextIntoTokens(text);
+            const elements = [];
+            const words = [];
+            let currentWord = [];
+            let currentWrapper = null;
+
+            function createNewWrapper() {
+                const wrapper = document.createElement('span');
+                wrapper.className = 'word-wrapper';
+                return wrapper;
+            }
+
+            if (!groupByWords) {
+                currentWrapper = createNewWrapper();
+                
+                for (let i = 0; i < tokens.length; i++) {
+                    const t = tokens[i];
+                    if (t.type === 'newline') {
+                        if (currentWord.length > 0) {
+                            words.push(currentWord);
+                            elements.push(currentWrapper);
+                            currentWord = [];
+                            currentWrapper = createNewWrapper();
+                        }
+                        words.push([document.createElement('br')]);
+                        elements.push(document.createElement('br'));
+                    } else if (t.type === 'space') {
+                        if (currentWord.length > 0) {
+                            words.push(currentWord);
+                            elements.push(currentWrapper);
+                            currentWord = [];
+                            currentWrapper = createNewWrapper();
+                        }
+                        const spanSpace = document.createElement('span');
+                        spanSpace.className = 'letter';
+                        spanSpace.innerHTML = '&nbsp;&nbsp;';
+                        styleLetterSpan(spanSpace, getRandomStyle());
+                        const spaceWrapper = createNewWrapper();
+                        spaceWrapper.appendChild(spanSpace);
+                        words.push([spanSpace]);
+                        elements.push(spaceWrapper);
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'letter';
+                        span.textContent = t.char;
+                        styleLetterSpan(span, getRandomStyle());
+                        currentWrapper.appendChild(span);
+                        currentWord.push(span);
+                    }
+                }
+            } else {
+                currentWrapper = createNewWrapper();
+                let currentStyle = getRandomStyle();
+                let inWord = false;
+
+                for (let i = 0; i < tokens.length; i++) {
+                    const t = tokens[i];
+
+                    if (t.type === 'newline') {
+                        if (currentWord.length > 0) {
+                            words.push(currentWord);
+                            elements.push(currentWrapper);
+                            currentWord = [];
+                            currentWrapper = createNewWrapper();
+                        }
+                        words.push([document.createElement('br')]);
+                        elements.push(document.createElement('br'));
+                        inWord = false;
+                    } else if (t.type === 'space') {
+                        if (currentWord.length > 0) {
+                            words.push(currentWord);
+                            elements.push(currentWrapper);
+                            currentWord = [];
+                            currentWrapper = createNewWrapper();
+                        }
+                        const spanSpace = document.createElement('span');
+                        spanSpace.className = 'letter';
+                        spanSpace.innerHTML = '&nbsp;&nbsp;';
+                        styleLetterSpan(spanSpace, currentStyle);
+                        const spaceWrapper = createNewWrapper();
+                        spaceWrapper.appendChild(spanSpace);
+                        words.push([spanSpace]);
+                        elements.push(spaceWrapper);
+                        inWord = false;
+                    } else {
+                        if (!inWord) {
+                            if (currentWord.length > 0) {
+                                words.push(currentWord);
+                                elements.push(currentWrapper);
+                                currentWord = [];
+                                currentWrapper = createNewWrapper();
+                            }
+                            currentStyle = getRandomStyle();
+                            inWord = true;
+                        }
+                        const spanLetter = document.createElement('span');
+                        spanLetter.className = 'letter';
+                        spanLetter.textContent = t.char;
+                        styleLetterSpan(spanLetter, currentStyle);
+                        currentWrapper.appendChild(spanLetter);
+                        currentWord.push(spanLetter);
+                    }
+                }
+            }
+
+            if (currentWord.length > 0) {
+                words.push(currentWord);
+                elements.push(currentWrapper);
+            }
+
+            return { elements, words };
+        }
+
+        function refreshOutput() {
+            const text = textarea.value;
+            const groupBy = groupCheckbox.checked;
+            const generated = generateStyledSpans(text, groupBy);
+
+            output.innerHTML = '';
+            generated.elements.forEach(elem => output.appendChild(elem));
+        }
+
+        // Function to draw text on canvas
+        function drawTextOnCanvas(text, style) {
+            ctx.font = `${style.fontSize}px ${style.fontFamily}`;
+            ctx.fillStyle = style.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Apply rotation
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(style.rotation * Math.PI / 180);
+            
+            // Draw text with outline if needed
+            if (Math.random() < 0.66) {
+                ctx.strokeStyle = style.outlineColor;
+                ctx.lineWidth = 1;
+                ctx.strokeText(text, 0, 0);
+            }
+            
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+        }
+
+        // Function to generate frames and create GIF
+        function generateGif() {
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            saveStatus.textContent = 'Generating GIF...';
+            
+            // Disable resize handle during generation
+            resizeHandle.classList.add('disabled');
+            
+            // Clear previous frames and line break decisions
+            capturedFrames = [];
+            frameDelays = [];
+            wordLineBreakMap.clear(); // Clear the line break decisions map
+            
+            // Get the text and settings
+            const text = textarea.value;
+            const groupBy = groupCheckbox.checked;
+            const { words } = generateStyledSpans(text, groupBy);
+            
+            // Create a new GIF encoder
+            const encoder = new GIFEncoder(canvas.width, canvas.height);
+            encoder.setRepeat(0);
+            encoder.setQuality(10);
+            
+            // Set transparent color to match background
+            const bgColor = getRandomBgColor();
+            const r = parseInt(bgColor.substr(1,2), 16);
+            const g = parseInt(bgColor.substr(3,2), 16);
+            const b = parseInt(bgColor.substr(5,2), 16);
+            encoder.setTransparent(r + (g << 8) + (b << 16));
+            
+            // Start the encoder
+            encoder.writeHeader();
+            
+            // Initialize variables for layout
+            let currentX = 20;
+            let currentY = 60;
+            let maxHeight = 0;
+            
+            // Process words one by one
+            let currentIndex = 0;
+            
+            // Function to process the next word
+            function processNextWord() {
+                if (currentIndex >= words.length) {
+                    // All words processed, finish the GIF
+                    finishGifGeneration(encoder);
+                    return;
+                }
+                
+                const wordElements = words[currentIndex];
+                
+                // Clear canvas and draw background with the correct color
+                const bgColor = getRandomBgColor();
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Check if this is a line break
+                if (wordElements[0].tagName === 'BR') {
+                    // For line breaks, we start fresh on the next line
+                    currentX = 20;
+                    // Use currentLineHeight to control line spacing (higher value = more space)
+                    currentY += maxHeight + (currentLineHeight / 5);
+                    maxHeight = 0;
+                    
+                    // Capture this frame for the encoder
+                    captureFrameForEncoder(encoder, false);
+                    
+                    // Update status
+                    saveStatus.textContent = `Generating GIF... (${currentIndex + 1}/${words.length})`;
+                    
+                    // Move to next word
+                    currentIndex++;
+                    
+                    // Process next word after a short delay (3ms)
+                    setTimeout(processNextWord, 3);
+                    return;
+                }
+                
+                // Check if we're starting a new line (either after a BR or at the start)
+                const isNewLine = currentIndex === 0 || (currentIndex > 0 && words[currentIndex-1][0].tagName === 'BR');
+                
+                // Get style for this word
+                const style = getRandomStyle();
+                let wordText = '';
+                wordElements.forEach(elem => {
+                    wordText += elem.textContent;
+                });
+                
+                // Measure word width
+                ctx.font = `${style.fontSize}px ${style.fontFamily}`;
+                const wordWidth = ctx.measureText(wordText).width;
+                
+                // Check if we need to start a new line
+                // Use the stored decision if available, otherwise make a new decision
+                let needsNewLine = false;
+                const wordKey = `${currentIndex}-${wordText}`;
+                
+                if (wordLineBreakMap.has(wordKey)) {
+                    // Use the stored decision
+                    needsNewLine = wordLineBreakMap.get(wordKey);
+                } else {
+                    // Make a new decision and store it
+                    needsNewLine = currentX + wordWidth > canvas.width - 50;
+                    wordLineBreakMap.set(wordKey, needsNewLine);
+                }
+                
+                if (needsNewLine) {
+                    // Word doesn't fit, start a new line
+                    currentX = 20;
+                    // Use currentLineHeight to control line spacing (higher value = more space)
+                    currentY += maxHeight + (currentLineHeight / 5);
+                    maxHeight = 0;
+                    
+                    // Clear canvas and draw background again
+                    ctx.fillStyle = getRandomBgColor();
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                if (isNewLine) {
+                    // For new lines, only draw the current word
+                    // Draw the word
+                    ctx.save();
+                    
+                    // Get consistent random position for this word
+                    let randomX, randomY;
+                    const wordKey = `${currentIndex}-${wordText}`;
+                    
+                    if (wordPositionMap.has(wordKey)) {
+                        // Use stored random position
+                        const pos = wordPositionMap.get(wordKey);
+                        randomX = pos.x;
+                        randomY = pos.y;
+                    } else {
+                        // Generate and store new random position
+                        randomX = (Math.random() * 2 - 1); // Reduced from 4 to 2
+                        randomY = (Math.random() * 2 - 1); // Reduced from 4 to 2
+                        wordPositionMap.set(wordKey, {x: randomX, y: randomY});
+                    }
+                    
+                    ctx.translate(currentX + wordWidth/2 + randomX, currentY + randomY);
+                    ctx.rotate(style.rotation * Math.PI / 180);
+                    
+                    if (Math.random() < 0.66) {
+                        ctx.strokeStyle = style.outlineColor;
+                        ctx.lineWidth = 1;
+                        ctx.strokeText(wordText, 0, 0);
+                    }
+                    
+                    ctx.fillStyle = style.color;
+                    ctx.fillText(wordText, 0, 0);
+                    ctx.restore();
+                    
+                    // Update position for next word - improved spacing calculation
+                    // Base spacing on both word width and font size to prevent overlapping
+                    const minSpacing = Math.max(20, style.fontSize * 0.3); // Minimum spacing based on font size
+                    const widthBasedSpacing = wordWidth * 0.2; // Increased from 0.1 to 0.2
+                    const spacing = Math.max(minSpacing, widthBasedSpacing);
+                    currentX += wordWidth + spacing;
+                    maxHeight = Math.max(maxHeight, style.fontSize);
+                } else {
+                    // For continuing lines, draw all words up to this point
+                    let drawX = 20;
+                    let drawY = 60;
+                    let lineHeight = 0;
+                    
+                    // Find the last line break (if any)
+                    let startIndex = currentIndex;
+                    while (startIndex > 0 && words[startIndex-1][0].tagName !== 'BR') {
+                        startIndex--;
+                    }
+                    
+                    // Draw all words from the start of the current line
+                    for (let j = startIndex; j <= currentIndex; j++) {
+                        const drawWordElements = words[j];
+                        const drawStyle = getRandomStyle();
+                        let drawWordText = '';
+                        drawWordElements.forEach(elem => {
+                            drawWordText += elem.textContent;
+                        });
+                        
+                        // Measure word width
+                        ctx.font = `${drawStyle.fontSize}px ${drawStyle.fontFamily}`;
+                        const drawWordWidth = ctx.measureText(drawWordText).width;
+                        
+                        // Check if we need to start a new line
+                        // Use the stored decision if available, otherwise make a new decision
+                        let needsNewLine = false;
+                        const drawWordKey = `${j}-${drawWordText}`;
+                        
+                        if (wordLineBreakMap.has(drawWordKey)) {
+                            // Use the stored decision
+                            needsNewLine = wordLineBreakMap.get(drawWordKey);
+                        } else {
+                            // Make a new decision and store it
+                            needsNewLine = drawX + drawWordWidth > canvas.width - 50;
+                            wordLineBreakMap.set(drawWordKey, needsNewLine);
+                        }
+                        
+                        if (needsNewLine) {
+                            // Word doesn't fit, start a new line
+                            drawX = 20;
+                            // Use currentLineHeight to control line spacing (higher value = more space)
+                            drawY += lineHeight + (currentLineHeight / 5);
+                            lineHeight = 0;
+                        }
+                        
+                        // Draw the word
+                        ctx.save();
+                        
+                        // Get consistent random position for this word
+                        let randomX, randomY;
+                        const positionKey = `${j}-${drawWordText}`;
+                        
+                        if (wordPositionMap.has(positionKey)) {
+                            // Use stored random position
+                            const pos = wordPositionMap.get(positionKey);
+                            randomX = pos.x;
+                            randomY = pos.y;
+                        } else {
+                            // Generate and store new random position
+                            randomX = (Math.random() * 2 - 1); // Reduced from 4 to 2
+                            randomY = (Math.random() * 2 - 1); // Reduced from 4 to 2
+                            wordPositionMap.set(positionKey, {x: randomX, y: randomY});
+                        }
+                        
+                        ctx.translate(drawX + drawWordWidth/2 + randomX, drawY + randomY);
+                        ctx.rotate(drawStyle.rotation * Math.PI / 180);
+                        
+                        if (Math.random() < 0.66) {
+                            ctx.strokeStyle = drawStyle.outlineColor;
+                            ctx.lineWidth = 1;
+                            ctx.strokeText(drawWordText, 0, 0);
+                        }
+                        
+                        ctx.fillStyle = drawStyle.color;
+                        ctx.fillText(drawWordText, 0, 0);
+                        ctx.restore();
+                        
+                        // Update position - improved spacing calculation
+                        // Base spacing on both word width and font size to prevent overlapping
+                        const minSpacing = Math.max(20, drawStyle.fontSize * 0.3); // Minimum spacing based on font size
+                        const widthBasedSpacing = drawWordWidth * 0.2; // Increased from 0.1 to 0.2
+                        const spacing = Math.max(minSpacing, widthBasedSpacing);
+                        drawX += drawWordWidth + spacing;
+                        lineHeight = Math.max(lineHeight, drawStyle.fontSize);
+                    }
+                    
+                    // Update current position
+                    currentX = drawX;
+                    currentY = drawY;
+                    maxHeight = Math.max(maxHeight, lineHeight);
+                }
+                
+                // Check if the next word is a line break or if this is the last word
+                const isNextWordLineBreak = currentIndex + 1 < words.length && words[currentIndex + 1][0].tagName === 'BR';
+                const isLastWord = currentIndex + 1 >= words.length;
+                
+                // Capture this frame with longer duration if it's before a clean frame
+                captureFrameForEncoder(encoder, isNextWordLineBreak || isLastWord);
+                
+                if (isNextWordLineBreak || isLastWord) {
+                    // Repeat the current frame 2 times to give users more time to read
+                    for (let i = 0; i < 1; i++) {
+                        // Add the same frame again with the same delay
+                        captureFrameForEncoder(encoder, true);
+                    }
+                }
+                
+                // Update status
+                saveStatus.textContent = `Generating GIF... (${currentIndex + 1}/${words.length})`;
+                
+                // Move to next word
+                currentIndex++;
+                
+                // Process next word after a short delay (3ms)
+                setTimeout(processNextWord, 5);
+            }
+            
+            // Start processing the first word
+            processNextWord();
+        }
+        
+        // Function to capture a frame for the encoder
+        function captureFrameForEncoder(encoder, isBeforeCleanFrame) {
+            // Create a temporary canvas to ensure clean background
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Draw background first
+            const bgColor = getRandomBgColor();
+            tempCtx.fillStyle = bgColor;
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Draw the current canvas content
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            // Get the image data from the temporary canvas
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
+            
+            // Add the frame to the encoder
+            encoder.addFrame(imageData);
+            
+            // Set the delay based on whether this is a regular frame or a special frame
+            if (isBeforeCleanFrame) {
+                // For the last word of a line or the last word overall, use a longer delay
+                encoder.setDelay(1000); // 1 second delay
+            } else {
+                // For regular frames, use the user-specified frame duration
+                encoder.setDelay(frameDuration * 1000); // Convert seconds to milliseconds
+            }
+        }
+
+        // Function to finish GIF generation
+        function finishGifGeneration(encoder) {
+            // Finish the encoder
+            encoder.finish();
+            
+            // Get binary data and convert to data URL
+            const binaryGif = encoder.stream().getData();
+            const dataUrl = 'data:image/gif;base64,' + btoa(binaryGif);
+            
+            // Show preview
+            previewGif.src = dataUrl;
+            previewGif.style.display = 'block';
+            saveStatus.textContent = 'GIF generated!';
+            
+            isProcessing = false;
+            
+            // Re-enable resize handle after generation
+            resizeHandle.classList.remove('disabled');
+        }
+
+        // Event Listeners
+        previewButton.addEventListener('click', () => {
+            clearFirst();
+            cancelGeneration = false;
+            generateGif();
+        });
+
+        // Font selection event listeners
+        chooseFontsButton.addEventListener('click', () => {
+            buildFontCheckboxes();
+            chooseFontsPopup.style.display = 'block';
+        });
+
+        closeFontsPopupButton.addEventListener('click', () => {
+            chooseFontsPopup.style.display = 'none';
+        });
+
+        selectAllFontsButton.addEventListener('click', () => {
+            selectedFonts = [...allFonts];
+            buildFontCheckboxes();
+        });
+
+        unselectAllFontsButton.addEventListener('click', () => {
+            selectedFonts = [];
+            buildFontCheckboxes();
+        });
+
+        textarea.addEventListener('input', refreshOutput);
+        groupCheckbox.addEventListener('change', refreshOutput);
+
+        frameDurationInput.addEventListener('input', (e) => {
+            frameDuration = parseFloat(e.target.value);
+        });
+
+        textColorPicker.addEventListener('input', refreshOutput);
+
+        bgColorPicker.addEventListener('input', () => {
+            const bgColor = bgColorPicker.value;
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        randomColorCheckbox.addEventListener('change', refreshOutput);
+
+        randomBgColorCheckbox.addEventListener('change', () => {
+            if (randomBgColorCheckbox.checked) {
+                // Initialize with a random starting color
+                previousHue = Math.floor(Math.random() * 360);
+                previousSaturation = 20 + Math.floor(Math.random() * 30); // 20-50% saturation
+                previousLightness = 80 + Math.floor(Math.random() * 20); // 80-100% lightness
+            }
+            
+            const bgColor = getRandomBgColor();
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Initialize
+        initSelectedFontsRandomly();
+        refreshOutput();
+        
+        // Set canvas to fixed dimensions
+        canvas.width = 1280;
+        canvas.height = 720;
+        
+        // Set initial canvas background color
+        const initialBgColor = bgColorPicker.value;
+        ctx.fillStyle = initialBgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Update line height slider
+        lineHeightSlider.addEventListener('input', (e) => {
+            currentLineHeight = parseInt(e.target.value);
+            lineHeightValue.textContent = `${currentLineHeight}%`;
+            refreshOutput();
+        });
+    </script>
+    
+    <!-- Add html2canvas library for capturing frames -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</body>
+</html> 
