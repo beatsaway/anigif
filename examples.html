@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Animation Effects Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px #fff; }
+            to { text-shadow: 0 0 30px #fff, 0 0 40px #fff; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .effect-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .effect-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .effect-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .demo-area {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .demo-shape {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 12px;
+        }
+
+        .description {
+            font-size: 0.9em;
+            color: #e0e0e0;
+            line-height: 1.4;
+        }
+
+        /* Transform Effects */
+        .translate-demo {
+            animation: translateMove 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes translateMove {
+            0% { transform: translateX(-30px); }
+            100% { transform: translateX(30px); }
+        }
+
+        .scale-demo {
+            animation: scaleEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes scaleEffect {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1.2); }
+        }
+
+        .rotate-demo {
+            animation: rotateEffect 2s linear infinite;
+        }
+
+        @keyframes rotateEffect {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .skew-demo {
+            animation: skewEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes skewEffect {
+            0% { transform: skew(0deg, 0deg); }
+            100% { transform: skew(20deg, 10deg); }
+        }
+
+        /* Deformation Effects */
+        .stretch-demo {
+            animation: stretchEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes stretchEffect {
+            0% { transform: scaleX(1) scaleY(1); }
+            100% { transform: scaleX(1.5) scaleY(0.7); }
+        }
+
+        .squash-demo {
+            animation: squashEffect 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes squashEffect {
+            0% { transform: scaleY(1); }
+            100% { transform: scaleY(0.5); }
+        }
+
+        .bend-demo {
+            width: 80px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: 3px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 10px;
+            animation: bendEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bendEffect {
+            0% { 
+                border-radius: 0px;
+                transform: rotate(0deg);
+            }
+            100% { 
+                border-radius: 40px;
+                transform: rotate(15deg);
+            }
+        }
+
+        .twist-demo {
+            animation: twistEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes twistEffect {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(180deg); }
+        }
+
+        .wave-demo {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            animation: waveEffect 2s ease-in-out infinite;
+        }
+
+        @keyframes waveEffect {
+            0%, 100% { transform: translateY(0) scaleX(1); }
+            25% { transform: translateY(-10px) scaleX(0.8); }
+            50% { transform: translateY(0) scaleX(1.2); }
+            75% { transform: translateY(10px) scaleX(0.9); }
+        }
+
+        .bulge-demo {
+            animation: bulgeEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bulgeEffect {
+            0% { transform: scale(1); border-radius: 8px; }
+            100% { transform: scale(1.3); border-radius: 50%; }
+        }
+
+        /* Opacity & Visibility */
+        .fade-demo {
+            animation: fadeEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes fadeEffect {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .dissolve-demo {
+            animation: dissolveEffect 2s ease-in-out infinite alternate;
+            filter: contrast(1);
+        }
+
+        @keyframes dissolveEffect {
+            0% { 
+                filter: blur(0px) contrast(1);
+                opacity: 1;
+            }
+            100% { 
+                filter: blur(3px) contrast(0.5);
+                opacity: 0.3;
+            }
+        }
+
+        .wipe-demo {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wipe-demo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            animation: wipeEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes wipeEffect {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Path-based Animation */
+        .path-demo {
+            animation: pathEffect 3s ease-in-out infinite;
+        }
+
+        @keyframes pathEffect {
+            0% { transform: translateX(-40px) translateY(0); }
+            25% { transform: translateX(0) translateY(-20px); }
+            50% { transform: translateX(40px) translateY(0); }
+            75% { transform: translateX(0) translateY(20px); }
+            100% { transform: translateX(-40px) translateY(0); }
+        }
+
+        .morph-demo {
+            animation: morphEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes morphEffect {
+            0% { 
+                border-radius: 8px;
+                transform: rotate(0deg);
+            }
+            100% { 
+                border-radius: 50%;
+                transform: rotate(45deg);
+            }
+        }
+
+        .draw-demo {
+            width: 80px;
+            height: 80px;
+            border: 4px solid #4ecdc4;
+            border-radius: 50%;
+            background: none;
+            animation: drawEffect 2s ease-in-out infinite;
+        }
+
+        @keyframes drawEffect {
+            0% { 
+                stroke-dasharray: 0 251;
+                transform: rotate(0deg);
+            }
+            100% { 
+                stroke-dasharray: 251 0;
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Color & Style Effects */
+        .color-shift-demo {
+            animation: colorShiftEffect 3s ease-in-out infinite;
+        }
+
+        @keyframes colorShiftEffect {
+            0% { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); }
+            33% { background: linear-gradient(45deg, #4ecdc4, #45b7d1); }
+            66% { background: linear-gradient(45deg, #45b7d1, #f9ca24); }
+            100% { background: linear-gradient(45deg, #f9ca24, #ff6b6b); }
+        }
+
+        .gradient-demo {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .stroke-demo {
+            border: 2px solid #4ecdc4;
+            background: none;
+            animation: strokeEffect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes strokeEffect {
+            0% { border-width: 2px; }
+            100% { border-width: 8px; }
+        }
+
+        /* Physics Effects */
+        .bounce-demo {
+            animation: bounceEffect 1s ease-in-out infinite;
+        }
+
+        @keyframes bounceEffect {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .swing-demo {
+            transform-origin: top center;
+            animation: swingEffect 2s ease-in-out infinite;
+        }
+
+        @keyframes swingEffect {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+
+        .gravity-demo {
+            animation: gravityEffect 2s ease-in infinite;
+        }
+
+        @keyframes gravityEffect {
+            0% { transform: translateY(-40px); }
+            100% { transform: translateY(40px); }
+        }
+
+        .spring-demo {
+            animation: springEffect 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes springEffect {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Particle Effects */
+        .particle-demo {
+            position: relative;
+        }
+
+        .particle-demo::before,
+        .particle-demo::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            animation: particleEffect 2s ease-in-out infinite;
+        }
+
+        .particle-demo::before {
+            top: -10px;
+            left: -10px;
+            animation-delay: 0s;
+        }
+
+        .particle-demo::after {
+            bottom: -10px;
+            right: -10px;
+            animation-delay: 1s;
+        }
+
+        @keyframes particleEffect {
+            0% { 
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .explosion-demo {
+            position: relative;
+            animation: explosionCenter 2s ease-in-out infinite;
+        }
+
+        .explosion-demo::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,107,107,0.8) 0%, rgba(255,107,107,0) 70%);
+            border-radius: 50%;
+            animation: explosionEffect 2s ease-in-out infinite;
+        }
+
+        @keyframes explosionCenter {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.8); }
+        }
+
+        @keyframes explosionEffect {
+            0% { 
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: #45b7d1;
+        }
+
+        .paused * {
+            animation-play-state: paused !important;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .control-panel {
+                position: relative;
+                margin: 20px auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Basic Animation Effects Showcase</h1>
+    </div>
+
+    <div class="control-panel">
+        <button class="control-button" onclick="toggleAnimations()">Pause All</button>
+        <button class="control-button" onclick="resetAnimations()">Reset</button>
+    </div>
+
+    <div class="grid" id="effectsGrid">
+        <!-- Transform Effects -->
+        <div class="effect-card">
+            <h3 class="effect-title">Translate</h3>
+            <div class="demo-area">
+                <div class="demo-shape translate-demo">MOVE</div>
+            </div>
+            <p class="description">Moving objects along X, Y, or Z axes. Essential for position-based animations.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Scale</h3>
+            <div class="demo-area">
+                <div class="demo-shape scale-demo">SIZE</div>
+            </div>
+            <p class="description">Growing or shrinking objects. Perfect for emphasis and attention-grabbing effects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Rotate</h3>
+            <div class="demo-area">
+                <div class="demo-shape rotate-demo">SPIN</div>
+            </div>
+            <p class="description">Spinning around center point or custom pivot. Great for loading indicators.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Skew</h3>
+            <div class="demo-area">
+                <div class="demo-shape skew-demo">TILT</div>
+            </div>
+            <p class="description">Slanting or tilting objects at angles. Adds dynamic perspective to elements.</p>
+        </div>
+
+        <!-- Deformation Effects -->
+        <div class="effect-card">
+            <h3 class="effect-title">Stretch</h3>
+            <div class="demo-area">
+                <div class="demo-shape stretch-demo">PULL</div>
+            </div>
+            <p class="description">Elongating in one direction while compressing in another. Creates elastic feel.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Squash</h3>
+            <div class="demo-area">
+                <div class="demo-shape squash-demo">FLAT</div>
+            </div>
+            <p class="description">Flattening for impact or weight simulation. Classic animation principle.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Bend</h3>
+            <div class="demo-area">
+                <div class="bend-demo">BEND</div>
+            </div>
+            <p class="description">Rectangle morphing from straight edges to curved corners. Shows border bending effect.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Twist</h3>
+            <div class="demo-area">
+                <div class="demo-shape twist-demo">3D</div>
+            </div>
+            <p class="description">Rotating different parts at different rates. Creates 3D flip effects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Wave</h3>
+            <div class="demo-area">
+                <div class="wave-demo"></div>
+            </div>
+            <p class="description">Creating sine wave distortions. Perfect for water or flag effects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Bulge</h3>
+            <div class="demo-area">
+                <div class="demo-shape bulge-demo">GROW</div>
+            </div>
+            <p class="description">Expanding outward from center point. Great for button hover effects.</p>
+        </div>
+
+        <!-- Opacity & Visibility -->
+        <div class="effect-card">
+            <h3 class="effect-title">Fade</h3>
+            <div class="demo-area">
+                <div class="demo-shape fade-demo">FADE</div>
+            </div>
+            <p class="description">Gradually changing transparency. Most common transition effect.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Dissolve</h3>
+            <div class="demo-area">
+                <div class="demo-shape dissolve-demo">BLUR</div>
+            </div>
+            <p class="description">Pixelated fade effect using blur. Creates dreamy transition feel.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Wipe</h3>
+            <div class="demo-area">
+                <div class="demo-shape wipe-demo">WIPE</div>
+            </div>
+            <p class="description">Revealing or hiding with moving edge. Great for revealing content.</p>
+        </div>
+
+        <!-- Path-based Animation -->
+        <div class="effect-card">
+            <h3 class="effect-title">Follow Path</h3>
+            <div class="demo-area">
+                <div class="demo-shape path-demo">PATH</div>
+            </div>
+            <p class="description">Moving along predefined curves. Perfect for complex motion trails.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Morph</h3>
+            <div class="demo-area">
+                <div class="demo-shape morph-demo">MORPH</div>
+            </div>
+            <p class="description">Smoothly changing between different shapes. Creates fluid transformations.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Draw On</h3>
+            <div class="demo-area">
+                <div class="draw-demo"></div>
+            </div>
+            <p class="description">Revealing lines as if being drawn. Great for SVG line animations.</p>
+        </div>
+
+        <!-- Color & Style Effects -->
+        <div class="effect-card">
+            <h3 class="effect-title">Color Shift</h3>
+            <div class="demo-area">
+                <div class="demo-shape color-shift-demo">COLOR</div>
+            </div>
+            <p class="description">Transitioning between different hues. Creates vibrant, dynamic effects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Gradient Animation</h3>
+            <div class="demo-area">
+                <div class="demo-shape gradient-demo">GRAD</div>
+            </div>
+            <p class="description">Moving color gradients. Perfect for modern, flowing backgrounds.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Stroke Weight</h3>
+            <div class="demo-area">
+                <div class="demo-shape stroke-demo">BORDER</div>
+            </div>
+            <p class="description">Changing line thickness. Great for emphasizing outlines.</p>
+        </div>
+
+        <!-- Physics Effects -->
+        <div class="effect-card">
+            <h3 class="effect-title">Bounce</h3>
+            <div class="demo-area">
+                <div class="demo-shape bounce-demo">JUMP</div>
+            </div>
+            <p class="description">Elastic collision simulation. Adds playful, energetic feel.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Swing</h3>
+            <div class="demo-area">
+                <div class="demo-shape swing-demo">SWING</div>
+            </div>
+            <p class="description">Pendulum motion. Perfect for hanging or dangling objects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Gravity</h3>
+            <div class="demo-area">
+                <div class="demo-shape gravity-demo">FALL</div>
+            </div>
+            <p class="description">Falling with acceleration. Simulates realistic dropping motion.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Spring</h3>
+            <div class="demo-area">
+                <div class="demo-shape spring-demo">SPRING</div>
+            </div>
+            <p class="description">Oscillating back to rest position. Creates natural, bouncy feel.</p>
+        </div>
+
+        <!-- Particle Effects -->
+        <div class="effect-card">
+            <h3 class="effect-title">Particles</h3>
+            <div class="demo-area">
+                <div class="demo-shape particle-demo">EMIT</div>
+            </div>
+            <p class="description">Spawning multiple small elements. Perfect for magical effects.</p>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Explosion</h3>
+            <div class="demo-area">
+                <div class="demo-shape explosion-demo">BOOM</div>
+            </div>
+            <p class="description">Radial burst patterns. Creates dramatic impact effects.</p>
+        </div>
+    </div>
+
+    <script>
+        let animationsPaused = false;
+        
+        function toggleAnimations() {
+            const grid = document.getElementById('effectsGrid');
+            const button = document.querySelector('.control-button');
+            
+            if (animationsPaused) {
+                grid.classList.remove('paused');
+                button.textContent = 'Pause All';
+                animationsPaused = false;
+            } else {
+                grid.classList.add('paused');
+                button.textContent = 'Play All';
+                animationsPaused = true;
+            }
+        }
+        
+        function resetAnimations() {
+            const grid = document.getElementById('effectsGrid');
+            grid.style.animation = 'none';
+            grid.offsetHeight; // Trigger reflow
+            grid.style.animation = null;
+            
+            // Reset all child animations
+            const animatedElements = grid.querySelectorAll('[class*="demo"]');
+            animatedElements.forEach(element => {
+                element.style.animation = 'none';
+                element.offsetHeight; // Trigger reflow
+                element.style.animation = null;
+            });
+        }
+        
+        // Add hover effects to cards
+        document.querySelectorAll('.effect-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add click to focus on individual animations
+        document.querySelectorAll('.demo-shape, .bend-demo, .wave-demo, .draw-demo').forEach(demo => {
+            demo.addEventListener('click', function() {
+                // Pause all other animations temporarily
+                const allDemos = document.querySelectorAll('.demo-shape, .bend-demo, .wave-demo, .draw-demo');
+                allDemos.forEach(d => {
+                    if (d !== this) {
+                        d.style.animationPlayState = 'paused';
+                    }
+                });
+                
+                // Resume after 3 seconds
+                setTimeout(() => {
+                    allDemos.forEach(d => {
+                        d.style.animationPlayState = 'running';
+                    });
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
