@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔥 Pop Art Clock GIF Challenge 🔥</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: #ffe4f0;
+      color: #333;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      color: #ff0080;
+      font-size: 3rem;
+      text-align: center;
+    }
+    h2 {
+      color: #00ccff;
+      margin-top: 2rem;
+    }
+    .tip {
+      background: #fff9c4;
+      border-left: 6px solid #fbc02d;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    ul {
+      list-style: star;
+      padding-left: 1.5rem;
+    }
+    a {
+      color: #ff0080;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .gif-tool {
+      background: #e0f7fa;
+      padding: 1rem;
+      border-left: 6px solid #00acc1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Make a Meme GIF for Your Festive Frame!</h1>
+
+  <p>You're selling the <strong>Festive Frame</strong> online and want to make it go viral. Time to create a fun animated <strong>GIF</strong> and show the world what you’ve got 💥</p>
+
+  <h2>✅ Your GIF Must Include:</h2>
+  <ul>
+    <li>📛 The product name: <strong>________ Photo Frame</strong></li>
+    <li>💸 A price (you decide!)</li>
+    <li>🛍️ Where to buy it (a shop name or a website link)</li>
+    <li>🗯️ A catchy slogan that grabs attention</li>
+    <li>🎨 At least <strong>3 colours</strong></li>
+    <li>🔥 Cool animation techniques</li>
+  </ul>
+
+  <div class="tip">
+    👉 Need ideas for animation? Check this out:  
+    <a href="https://anigif.netlify.app/examples.html" target="_blank">https://anigif.netlify.app/examples.html</a>
+  </div>
+
+  <h2>🛠️ How to Make Your GIF</h2>
+  <div class="gif-tool">
+    <p>Use this tool to draw and animate your GIF:</p>
+    <a href="https://anigif.netlify.app/draw_v1/" target="_blank">🎨 Launch the GIF Maker</a>
+  </div>
+
+  <h2>💡 Tips While Making It</h2>
+  <ul>
+    <li>🖼️ Use <strong>Copy Frame</strong> to reuse what you already drew</li>
+    <li>🆕 Use <strong>New Frame</strong> to start fresh</li>
+    <li>👀 Use <strong>Preview</strong> to test your animation</li>
+    <li>🎬 Max frames: <strong>24</strong></li>
+  </ul>
+
+  <h2>📥 When You’re Done</h2>
+  <p>Click <strong>“Save GIF”</strong> to download your animation.</p>
+  <p>Then, <strong>upload it here</strong> to share your awesome promo!</p>
+
+  <h2>🌟 Make it fun. Make it bold. Make it pop!</h2>
+</body>
+</html>
